@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 import asyncio
 from fastapi import WebSocket
 import datetime
+import uvicorn
+
 app = FastAPI()
 app.include_router(student.router)
 
@@ -34,7 +36,6 @@ async def startup():
         file.write(f'\nApp Closed at {datetime.datetime.now()}')
 
 
-
 async def realtime_vote_updates(db: Session = Depends(get_db)):
     await asyncio.sleep(3)
 
@@ -58,8 +59,6 @@ async def realtime_vote_updates_vice_president(db: Session = Depends(get_db)):
     result = {}
     for i in query:
         result[i[0]] = {'name': i[1]}, {'total_votes': i[2]}
-    print(result)
-
     return result
 
 
@@ -99,3 +98,5 @@ async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)
         print('disconnected')
 
 
+if __name__ == '__main__':
+    uvicorn.run(app, port=8000, host="127.0.0.1")
